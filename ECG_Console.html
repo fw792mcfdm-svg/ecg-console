@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECG Console</title>
+<style>
+:root{--bg:#eef1ef;--paper:#fff;--ink:#142b2e;--soft:#4c6266;--line:#d7dedb;--teal:#1f6f64;--amber:#9a6400;--red:#a4291e;--green:#2c7a4b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--ink)}
+main{max-width:1000px;margin:auto;padding:18px}.hero,.card{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 8px #0000000a}
+h1{margin:0 0 4px;font-size:28px}.sub{color:var(--soft)}.warning{font-size:13px;color:var(--red);margin-top:8px}
+h2{font-size:18px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}input,select{width:100%;padding:10px;border:1px solid #c8d1ce;border-radius:9px;background:white;font-size:15px}
+.options{display:flex;flex-wrap:wrap;gap:8px}.options label{font-weight:400;border:1px solid var(--line);padding:8px 10px;border-radius:9px;background:#fafcfc}
+.options input{width:auto;margin-right:5px}
+table{width:100%;border-collapse:collapse}th,td{padding:8px;border-bottom:1px solid var(--line);text-align:left}th{font-size:13px}
+button{border:0;border-radius:10px;padding:11px 16px;font-weight:700;cursor:pointer;margin:4px}
+.primary{background:var(--teal);color:white}.secondary{background:#e7ecea;color:var(--ink)}
+.results{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.metric{background:#f3f7f6;border-radius:10px;padding:10px;text-align:center}.metric b{display:block;font-size:18px;margin-top:4px}
+.alert{padding:12px;border-radius:10px;margin:8px 0;background:#fff5dd;border-left:4px solid var(--amber)}.danger{background:#fff0ef;border-left-color:var(--red)}.ok{background:#eef8f1;border-left-color:var(--green)}
+.small{font-size:12px;color:var(--soft)}@media(max-width:700px){.grid{grid-template-columns:1fr}.results{grid-template-columns:repeat(3,1fr)}main{padding:10px}h1{font-size:24px}}
+@media print{button,.no-print{display:none!important}body{background:white}.card,.hero{box-shadow:none}}
+</style>
+</head>
+<body>
+<main>
+<section class="hero">
+<h1>ECG Console</h1>
+<div class="sub">Nhập thông số điện tâm đồ — nhận gợi ý chẩn đoán phân biệt</div>
+<div class="small">Biên soạn: ThS.BSCK1 Nguyễn Hùng Trấn</div>
+<div class="warning">Công cụ hỗ trợ, không thay thế thăm khám lâm sàng.</div>
+</section>
+
+<section class="card">
+<h2>1. Triệu chứng lâm sàng kèm theo</h2>
+<div class="options">
+<label><input type=checkbox value="Đau ngực" class=sym>Đau ngực</label>
+<label><input type=checkbox value="Khó thở" class=sym>Khó thở</label>
+<label><input type=checkbox value="Hồi hộp / trống ngực" class=sym>Hồi hộp / trống ngực</label>
+<label><input type=checkbox value="Chóng mặt / tiền ngất" class=sym>Chóng mặt / tiền ngất</label>
+<label><input type=checkbox value="Ngất" class=sym>Ngất</label>
+<label><input type=checkbox value="Vã mồ hôi / buồn nôn" class=sym>Vã mồ hôi / buồn nôn</label>
+<label><input type=checkbox value="Phù chân" class=sym>Phù chân</label>
+</div><br>
+<label>Thời gian khởi phát đau ngực (nếu có)</label>
+<select id=chest><option>Không đau ngực / không rõ</option><option>Dưới 2 giờ</option><option>2 – 12 giờ</option><option>Trên 12 giờ</option></select>
+</section>
+
+<section class="card">
+<h2>2. Tần số & nhịp cơ bản</h2>
+<div class=grid>
+<div><label>Tần số tim (lần/phút)</label><input id=hr type=number min=20 max=250></div>
+<div><label>Sóng P</label><select id=p><option>Có, hình dạng bình thường</option><option>Có, hình dạng bất thường</option><option>Không thấy sóng P rõ</option></select></div>
+<div><label>Khoảng PR (ms)</label><input id=pr type=number min=60 max=500></div>
+<div><label>Nhịp</label><select id=rhythm><option>Đều</option><option>Không đều</option></select></div>
+</div><br>
+<label>Quan hệ nhĩ – thất (chỉ chọn nếu có bất thường)</label>
+<select id=av><option>Không có</option><option>PR dài dần rồi rớt nhịp (Wenckebach)</option><option>Tỷ lệ P : QRS cố định > 1:1 (vd 2:1, 3:1)</option><option>P và QRS phân ly hoàn toàn</option></select>
+</section>
+
+<section class="card">
+<h2>3. Phức bộ QRS & trục điện tim</h2>
+<div class=grid>
+<div><label>Độ rộng QRS (ms)</label><input id=qrs type=number min=40 max=300></div>
+<div><label>Hình dạng ở V1</label><select id=v1><option>Bình thường</option><option>Dạng rSR' (chữ M)</option><option>QS hoặc rS rộng</option></select></div>
+<div><label>Hình dạng ở V6</label><select id=v6><option>Bình thường</option><option>Sóng S rộng, có khấc</option><option>Sóng R rộng, đơn pha, có khấc</option></select></div>
+<div><label>Trục QRS (độ, −180 → 180)</label><input id=axis type=number min=-180 max=180></div>
+</div>
+</section>
+
+<section class="card">
+<h2>4. Khoảng QT</h2>
+<div class=grid>
+<div><label>Khoảng QT đo được (ms)</label><input id=qt type=number min=100 max=800></div>
+<div><label>Giới tính</label><select id=sex><option>Nam</option><option>Nữ</option></select></div>
+</div>
+<p><b>QTc (Bazett, tự tính):</b> <span id=qtc>—</span></p>
+<div class=small>QTc = QT ÷ √RR, với RR = 60 ÷ tần số tim. Cần nhập tần số tim.</div>
+</section>
+
+<section class="card">
+<h2>5. Đoạn ST & sóng T theo vùng</h2>
+<table><tr><th>Vùng</th><th>Đoạn ST</th><th>Sóng T</th><th>Q bệnh lý</th></tr>
+<tr><td>V1–V2</td><td><select class=st><option>Không chênh</option><option>ST chênh lên</option><option>ST chênh xuống</option></select></td><td><select class=t><option>Bình thường</option><option>T âm</option><option>T cao nhọn</option></select></td><td><input type=checkbox class=q value="V1–V2"></td></tr>
+<tr><td>V3–V4</td><td><select class=st><option>Không chênh</option><option>ST chênh lên</option><option>ST chênh xuống</option></select></td><td><select class=t><option>Bình thường</option><option>T âm</option><option>T cao nhọn</option></select></td><td><input type=checkbox class=q value="V3–V4"></td></tr>
+<tr><td>V5–V6</td><td><select class=st><option>Không chênh</option><option>ST chênh lên</option><option>ST chênh xuống</option></select></td><td><select class=t><option>Bình thường</option><option>T âm</option><option>T cao nhọn</option></select></td><td><input type=checkbox class=q value="V5–V6"></td></tr>
+<tr><td>I, aVL</td><td><select class=st><option>Không chênh</option><option>ST chênh lên</option><option>ST chênh xuống</option></select></td><td><select class=t><option>Bình thường</option><option>T âm</option><option>T cao nhọn</option></select></td><td><input type=checkbox class=q value="I, aVL"></td></tr>
+<tr><td>II, III, aVF</td><td><select class=st><option>Không chênh</option><option>ST chênh lên</option><option>ST chênh xuống</option></select></td><td><select class=t><option>Bình thường</option><option>T âm</option><option>T cao nhọn</option></select></td><td><input type=checkbox class=q value="II, III, aVF"></td></tr>
+</table>
+</section>
+
+<section class="card">
+<h2>6. Điện thế buồng tim (phì đại)</h2>
+<div class=grid>
+<div><label>S ở V1 (mm)</label><input id=sv1 type=number step=.1></div>
+<div><label>R lớn nhất ở V5/V6 (mm)</label><input id=rv5 type=number step=.1></div>
+<div><label>R ở aVL (mm)</label><input id=ravl type=number step=.1></div>
+<div><label>R ở V1 (mm) — xét phì đại thất phải</label><input id=rv1 type=number step=.1></div>
+</div>
+</section>
+
+<section class="card">
+<h2>7. Dấu hiệu đặc biệt (nếu có)</h2>
+<select id=special>
+<option>Không có dấu hiệu đặc biệt</option>
+<option>Sóng Delta + PR ngắn (nghi WPW)</option>
+<option>ST chênh lên dạng vòm ở V1–V3 (nghi Brugada)</option>
+<option>ST chênh lên lan tỏa, đồng hướng + PR chênh xuống (nghi viêm màng ngoài tim)</option>
+<option>T cao nhọn, QRS giãn rộng, mất sóng P (nghi tăng Kali máu)</option>
+<option>ST lõm hình đáy chén (nghi ảnh hưởng Digoxin)</option>
+<option>Sóng Epsilon (nghi loạn sản thất phải – ARVC)</option>
+<option>Sóng J / Osborn (nghi hạ thân nhiệt)</option>
+</select>
+</section>
+
+<div class=no-print>
+<button class=primary onclick=analyze()>Phân tích</button>
+<button class=secondary onclick=clearAll()>Xóa toàn bộ</button>
+<button class=secondary onclick=window.print()>In kết quả</button>
+</div>
+
+<section class="card" id=result>
+<h2>Kết quả</h2>
+<div class=results>
+<div class=metric>NHỊP<b id=oRhythm>—</b></div>
+<div class=metric>TẦN SỐ<b id=oHr>—</b></div>
+<div class=metric>PR<b id=oPr>—</b></div>
+<div class=metric>QRS<b id=oQrs>—</b></div>
+<div class=metric>QTc<b id=oQtc>—</b></div>
+<div class=metric>TRỤC<b id=oAxis>—</b></div>
+</div>
+<h2 style="margin-top:18px">Gợi ý chẩn đoán phân biệt</h2>
+<div id=diagnosis>Nhập thông số bên trái rồi bấm “Phân tích”.</div>
+<p class=small>Công cụ hỗ trợ dựa trên các quy tắc ECG kinh điển, không thay thế đánh giá lâm sàng. Gợi ý cấp cứu cần đối chiếu bệnh sử, khám và hội chẩn chuyên khoa.</p>
+</section>
+</main>
+<script>
+const $=id=>document.getElementById(id), val=id=>$(id).value;
+function analyze(){
+ let hr=+val('hr'), pr=+val('pr'), qrs=+val('qrs'), qt=+val('qt'), axis=+val('axis');
+ let qtc=(hr&&qt)?qt/Math.sqrt(60/hr):NaN;
+ $('qtc').textContent=isFinite(qtc)?Math.round(qtc)+' ms':'—';
+ $('oRhythm').textContent=val('rhythm'); $('oHr').textContent=hr||'—'; $('oPr').textContent=pr?pr+' ms':'—';
+ $('oQrs').textContent=qrs?qrs+' ms':'—'; $('oQtc').textContent=isFinite(qtc)?Math.round(qtc)+' ms':'—'; $('oAxis').textContent=isFinite(axis)?axis+'°':'—';
+ let d=[];
+ if(hr){if(hr<50)d.push(['Nhịp chậm','danger']);else if(hr>100)d.push(['Nhịp nhanh','alert']);}
+ if(hr>150 && val('p')==='Không thấy sóng P rõ' && val('rhythm')==='Không đều') d.push(['Cân nhắc rung nhĩ với đáp ứng thất nhanh nếu phù hợp lâm sàng','danger']);
+ if(val('av').includes('Wenckebach'))d.push(['Block nhĩ thất độ II Mobitz I (Wenckebach)','alert']);
+ if(val('av').includes('cố định'))d.push(['Block nhĩ thất độ II với dẫn truyền 2:1/3:1 — cần đánh giá mức độ block','danger']);
+ if(val('av').includes('phân ly'))d.push(['Block nhĩ thất hoàn toàn (III độ) nếu có phân ly nhĩ–thất','danger']);
+ if(qrs>=120 && val('v1').includes("rSR"))d.push(['Block nhánh phải hoàn toàn nếu QRS ≥120 ms và hình thái phù hợp','alert']);
+ if(qrs>=120 && val('v1').includes('QS') && val('v6').includes('Sóng R'))d.push(['Block nhánh trái nếu QRS ≥120 ms và hình thái phù hợp','alert']);
+ if(isFinite(axis)){if(axis<-30)d.push(['Lệch trục trái','alert']);if(axis>90)d.push(['Lệch trục phải','alert']);}
+ let sex=val('sex'), limit=sex==='Nam'?450:460;
+ if(isFinite(qtc)){if(qtc>=500)d.push(['QTc ≥500 ms: kéo dài rõ, tăng nguy cơ xoắn đỉnh — cần tìm nguyên nhân và thuốc kéo dài QT','danger']);else if(qtc>limit)d.push(['QTc kéo dài theo giới — đối chiếu công thức/đo lại và nguyên nhân','alert']);}
+ let sts=[...document.querySelectorAll('.st')].map(x=>x.value), ts=[...document.querySelectorAll('.t')].map(x=>x.value);
+ let up=sts.filter(x=>x==='ST chênh lên').length, down=sts.filter(x=>x==='ST chênh xuống').length;
+ if(up>=1 && $('chest').value!=='Không đau ngực / không rõ')d.push(['ST chênh lên kèm đau ngực: cần loại trừ hội chứng vành cấp/STEMI theo phân bố chuyển đạo và lâm sàng','danger']);
+ if(down>=2)d.push(['ST chênh xuống ở ≥2 vùng: cân nhắc thiếu máu cơ tim/ACS và các nguyên nhân khác','danger']);
+ if(ts.includes('T cao nhọn'))d.push(['Sóng T cao nhọn: cân nhắc tăng kali máu nếu hình thái và lâm sàng phù hợp','danger']);
+ if(val('special')!=='Không có dấu hiệu đặc biệt')d.push([val('special'),'alert']);
+ if(+val('sv1') + +val('rv5')>=35)d.push(['Sokolow-Lyon: S V1 + R V5/V6 ≥35 mm — gợi ý phì đại thất trái','alert']);
+ if(+val('ravl')>=11)d.push(['R aVL ≥11 mm — gợi ý phì đại thất trái, cần phối hợp tiêu chuẩn khác','alert']);
+ if(!d.length)d.push(['Chưa thấy tiêu chí bất thường rõ từ các thông số đã nhập. Cần đọc ECG 12 chuyển đạo đầy đủ và đối chiếu lâm sàng.','ok']);
+ $('diagnosis').innerHTML=d.map(x=>`<div class="${x[1]}">${x[0]}</div>`).join('');
+}
+function clearAll(){document.querySelectorAll('input').forEach(x=>{if(x.type==='checkbox')x.checked=false;else x.value=''});document.querySelectorAll('select').forEach(x=>x.selectedIndex=0);$('qtc').textContent='—';['oRhythm','oHr','oPr','oQrs','oQtc','oAxis'].forEach(id=>$(id).textContent='—');$('diagnosis').textContent='Nhập thông số bên trái rồi bấm “Phân tích”.';}
+$('hr').addEventListener('input',()=>{let h=+val('hr'),qt=+val('qt');if(h&&qt)$('qtc').textContent=Math.round(qt/Math.sqrt(60/h))+' ms'});
+$('qt').addEventListener('input',()=>{let h=+val('hr'),qt=+val('qt');if(h&&qt)$('qtc').textContent=Math.round(qt/Math.sqrt(60/h))+' ms'});
+</script>
+</body></html>
